@@ -1,0 +1,10 @@
+POST http://localhost:8080/books
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "author": "Robert Martin",
+  "year": 2008
+}
+###
+GET http://localhost:8080/books
