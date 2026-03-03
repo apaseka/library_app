@@ -1,0 +1,9 @@
+POST http://localhost:8080/authors
+Content-Type: application/json
+
+{
+  "name1": "J.K. Rowling",
+  "name": "Robert Martin"
+}
+###
+GET http://localhost:8080/authors

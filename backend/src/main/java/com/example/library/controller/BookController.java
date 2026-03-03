@@ -1,7 +1,8 @@
 package com.example.library.controller;
 
+import com.example.library.dto.BookDTO;
 import com.example.library.entity.Book;
-import com.example.library.repository.BookRepository;
+import com.example.library.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,15 +13,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookController {
 
-    private final BookRepository bookRepository;
+    private final BookService bookService;
 
     @GetMapping
-    public List<Book> getAll() {
-        return bookRepository.findAll();
+    public List<BookDTO> getAll() {
+        return bookService.getAll();
     }
 
     @PostMapping
-    public Book create(@RequestBody Book book) {
-        return bookRepository.save(book);
+    public Book create(@RequestBody BookDTO dto) {
+        Book book = Book.builder()
+                .title(dto.getTitle())
+                .year(dto.getYear())
+                .build();
+
+        return bookService.create(book, dto.getAuthor());
     }
 }
