@@ -1,0 +1,18 @@
+package com.example.library.mapper;
+
+import com.example.library.dto.AuthorDTO;
+import com.example.library.entity.Author;
+
+public class AuthorMapper {
+
+    public static AuthorDTO toDto(Author author) {
+        return new AuthorDTO(author.getId(), author.getName());
+    }
+
+    public static Author toEntity(AuthorDTO dto) {
+        return Author.builder()
+                .name(dto.getName())
+                .build();
+    }
+
+}
