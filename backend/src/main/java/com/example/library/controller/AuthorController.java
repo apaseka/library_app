@@ -1,7 +1,6 @@
 package com.example.library.controller;
 
 import com.example.library.dto.AuthorDTO;
-import com.example.library.entity.Author;
 import com.example.library.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

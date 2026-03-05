@@ -3,6 +3,7 @@ package com.example.library.service;
 import com.example.library.dto.BookDTO;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
+import com.example.library.mapper.BookMapper;
 import com.example.library.repository.AuthorRepository;
 import com.example.library.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,7 @@ public class BookService {
     }
 
     private BookDTO toDto(Book book) {
-        return new BookDTO(
-                book.getId(),
-                book.getTitle(),
-                book.getYear(),
-                book.getAuthor().getName()
-        );
+        return BookMapper.toDto(book);
     }
 
     public Book create(Book book, String authorName) {
