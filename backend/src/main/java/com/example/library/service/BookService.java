@@ -3,6 +3,7 @@ package com.example.library.service;
 import com.example.library.dto.BookDTO;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
+import com.example.library.exception.ResourceNotFoundException;
 import com.example.library.mapper.BookMapper;
 import com.example.library.repository.AuthorRepository;
 import com.example.library.repository.BookRepository;
@@ -32,7 +33,9 @@ public class BookService {
     public BookDTO create(Book book, String authorName) {
 
         Author author = authorRepository.findByName(authorName)
-                .orElseThrow(() -> new RuntimeException("Author not found: " + authorName));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Author \"%s\" was not found in the database", authorName)
+                ));
 
         book.setAuthor(author);
         Book savedBook = bookRepository.save(book);
