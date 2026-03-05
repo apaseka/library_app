@@ -29,12 +29,14 @@ public class BookService {
         return BookMapper.toDto(book);
     }
 
-    public Book create(Book book, String authorName) {
+    public BookDTO create(Book book, String authorName) {
 
         Author author = authorRepository.findByName(authorName)
                 .orElseThrow(() -> new RuntimeException("Author not found: " + authorName));
 
         book.setAuthor(author);
-        return bookRepository.save(book);
+        Book savedBook = bookRepository.save(book);
+
+        return BookMapper.toDto(savedBook);
     }
 }

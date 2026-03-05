@@ -21,7 +21,7 @@ public class BookController {
     }
 
     @PostMapping
-    public Book create(@RequestBody BookDTO dto) {
+    public BookDTO create(@RequestBody BookDTO dto) {
         Book book = Book.builder()
                 .title(dto.getTitle())
                 .year(dto.getYear())
