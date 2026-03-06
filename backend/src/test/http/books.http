@@ -8,3 +8,16 @@ Content-Type: application/json
 }
 ###
 GET http://localhost:8080/books
+###
+GET http://localhost:8080/books/1
+###
+PUT http://localhost:8080/books/1
+Content-Type: application/json
+
+{
+  "title": "Clean Architecture",
+  "author": "Robert Martin",
+  "year": 2017
+}
+###
+DELETE http://localhost:8080/books/1
