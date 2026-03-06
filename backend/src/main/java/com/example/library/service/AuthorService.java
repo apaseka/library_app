@@ -4,6 +4,7 @@ import com.example.library.dto.AuthorDTO;
 import com.example.library.entity.Author;
 import com.example.library.mapper.AuthorMapper;
 import com.example.library.repository.AuthorRepository;
+import com.example.library.util.AuthorHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorHelper authorHelper;
 
     public List<AuthorDTO> getAll() {
         return authorRepository.findAll()
@@ -23,11 +25,9 @@ public class AuthorService {
     }
 
     public AuthorDTO save(AuthorDTO dto) {
-
+        authorHelper.ensureAuthorDoesNotExist(dto.getName());
         Author author = AuthorMapper.toEntity(dto);
-
         Author saved = authorRepository.save(author);
-
         return AuthorMapper.toDto(saved);
     }
 

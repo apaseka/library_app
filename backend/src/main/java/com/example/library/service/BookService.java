@@ -7,6 +7,7 @@ import com.example.library.exception.ResourceNotFoundException;
 import com.example.library.mapper.BookMapper;
 import com.example.library.repository.AuthorRepository;
 import com.example.library.repository.BookRepository;
+import com.example.library.util.AuthorHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
+    private final AuthorHelper authorHelper;
 
     public List<BookDTO> getAll() {
         return bookRepository.findAll()
@@ -43,18 +45,16 @@ public class BookService {
 
     public BookDTO create(BookDTO dto) {
 
-        Author author = findAuthorOrThrow(dto.getAuthor());
+        Author author = authorHelper.getAuthorIfExists(dto.getAuthor());
         Book book = BookMapper.toEntity(dto, author);
-
         Book savedBook = bookRepository.save(book);
-
-        return BookMapper.toDto(book);
+        return BookMapper.toDto(savedBook);
     }
 
     @Transactional
     public BookDTO update(Long id, BookDTO dto) {
         Book book = getBookByIdOrThrow(id);
-        Author author = findAuthorOrThrow(dto.getAuthor());
+        Author author = authorHelper.getAuthorIfExists(dto.getAuthor());
 
         book.setYear(dto.getYear());
         book.setTitle(dto.getTitle());
@@ -67,13 +67,6 @@ public class BookService {
          */
 
         return BookMapper.toDto(book);
-    }
-
-    private Author findAuthorOrThrow(String authorName) {
-        return authorRepository.findByName(authorName)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Author \"%s\" not found", authorName)
-                ));
     }
 
     public void deleteById(Long id) {
