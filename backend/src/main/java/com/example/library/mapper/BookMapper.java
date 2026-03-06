@@ -11,6 +11,10 @@ public class BookMapper {
                 book.getId(),
                 book.getTitle(),
                 book.getYear(),
+
+// TODO: Accessing book.getAuthor().getName() outside an active transaction
+// may cause LazyInitializationException due to lazy loading.
+// Solution: either keep the transaction open or use fetch join / DTO projection.
                 book.getAuthor().getName()
         );
     }
