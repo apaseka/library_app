@@ -23,9 +23,8 @@ public class AuthorService {
     }
 
     public AuthorDTO save(AuthorDTO dto) {
-        Author author = Author.builder()
-                .name(dto.getName())
-                .build();
+
+        Author author = AuthorMapper.toEntity(dto);
 
         Author saved = authorRepository.save(author);
 

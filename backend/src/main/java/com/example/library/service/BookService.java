@@ -22,24 +22,23 @@ public class BookService {
     public List<BookDTO> getAll() {
         return bookRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(BookMapper::toDto)
                 .toList();
     }
 
-    private BookDTO toDto(Book book) {
-        return BookMapper.toDto(book);
-    }
+    public BookDTO create(BookDTO dto) {
 
-    public BookDTO create(Book book, String authorName) {
-
-        Author author = authorRepository.findByName(authorName)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format("Author \"%s\" was not found in the database", authorName)
-                ));
-
-        book.setAuthor(author);
+        Author author = findAuthorOrThrow(dto.getAuthor());
+        Book book = BookMapper.toEntity(dto, author);
         Book savedBook = bookRepository.save(book);
 
         return BookMapper.toDto(savedBook);
+    }
+
+    private Author findAuthorOrThrow(String authorName) {
+        return authorRepository.findByName(authorName)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Author \"%s\" not found", authorName)
+                ));
     }
 }
