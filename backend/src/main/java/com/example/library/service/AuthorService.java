@@ -1,6 +1,7 @@
 package com.example.library.service;
 
-import com.example.library.dto.AuthorDTO;
+import com.example.library.dto.request.CreateAuthorRequest;
+import com.example.library.dto.response.AuthorDTO;
 import com.example.library.entity.Author;
 import com.example.library.mapper.AuthorMapper;
 import com.example.library.repository.AuthorRepository;
@@ -24,9 +25,9 @@ public class AuthorService {
                 .toList();
     }
 
-    public AuthorDTO save(AuthorDTO dto) {
-        authorHelper.ensureAuthorDoesNotExist(dto.getName());
-        Author author = AuthorMapper.toEntity(dto);
+    public AuthorDTO save(CreateAuthorRequest request) {
+        authorHelper.ensureAuthorDoesNotExist(request.name());
+        Author author = AuthorMapper.toEntity(request);
         Author saved = authorRepository.save(author);
         return AuthorMapper.toDto(saved);
     }

@@ -1,7 +1,9 @@
 package com.example.library.controller;
 
-import com.example.library.dto.BookDTO;
+import com.example.library.dto.request.CreateBookRequest;
+import com.example.library.dto.response.BookDTO;
 import com.example.library.service.BookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +22,8 @@ public class BookController {
     }
 
     @PostMapping
-    public BookDTO create(@RequestBody BookDTO dto) {
-        return bookService.create(dto);
+    public BookDTO create(@Valid @RequestBody CreateBookRequest request) {
+        return bookService.create(request);
     }
 
     @GetMapping("/{id}")

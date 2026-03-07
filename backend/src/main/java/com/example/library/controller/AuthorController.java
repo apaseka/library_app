@@ -1,7 +1,9 @@
 package com.example.library.controller;
 
-import com.example.library.dto.AuthorDTO;
+import com.example.library.dto.request.CreateAuthorRequest;
+import com.example.library.dto.response.AuthorDTO;
 import com.example.library.service.AuthorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +22,8 @@ public class AuthorController {
     }
 
     @PostMapping
-    public AuthorDTO create(@RequestBody AuthorDTO dto) {
-        return authorService.save(dto);
+    public AuthorDTO create(@Valid @RequestBody CreateAuthorRequest request) {
+        return authorService.save(request);
     }
 
 }
