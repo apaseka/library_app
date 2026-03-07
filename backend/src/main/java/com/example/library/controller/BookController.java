@@ -1,7 +1,6 @@
 package com.example.library.controller;
 
 import com.example.library.dto.BookDTO;
-import com.example.library.entity.Book;
 import com.example.library.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +20,23 @@ public class BookController {
     }
 
     @PostMapping
-    public Book create(@RequestBody BookDTO dto) {
-        Book book = Book.builder()
-                .title(dto.getTitle())
-                .year(dto.getYear())
-                .build();
-
-        return bookService.create(book, dto.getAuthor());
+    public BookDTO create(@RequestBody BookDTO dto) {
+        return bookService.create(dto);
     }
+
+    @GetMapping("/{id}")
+    public BookDTO getBtId(@PathVariable Long id) {
+        return bookService.getById(id);
+    }
+
+    @PutMapping("/{id}")
+    public BookDTO update(@PathVariable Long id, @RequestBody BookDTO dto) {
+        return bookService.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        bookService.deleteById(id);
+    }
+
 }

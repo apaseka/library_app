@@ -2,7 +2,9 @@ package com.example.library.service;
 
 import com.example.library.dto.AuthorDTO;
 import com.example.library.entity.Author;
+import com.example.library.mapper.AuthorMapper;
 import com.example.library.repository.AuthorRepository;
+import com.example.library.util.AuthorHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,28 +15,20 @@ import java.util.List;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorHelper authorHelper;
 
     public List<AuthorDTO> getAll() {
         return authorRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(AuthorMapper::toDto)
                 .toList();
     }
 
     public AuthorDTO save(AuthorDTO dto) {
-        Author author = Author.builder()
-                .name(dto.getName())
-                .build();
-
+        authorHelper.ensureAuthorDoesNotExist(dto.getName());
+        Author author = AuthorMapper.toEntity(dto);
         Author saved = authorRepository.save(author);
-
-        return toDto(saved);
+        return AuthorMapper.toDto(saved);
     }
 
-    private AuthorDTO toDto(Author author) {
-        return new AuthorDTO(
-                author.getId(),
-                author.getName()
-        );
-    }
 }
