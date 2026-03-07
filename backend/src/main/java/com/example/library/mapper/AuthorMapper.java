@@ -1,6 +1,7 @@
 package com.example.library.mapper;
 
-import com.example.library.dto.AuthorDTO;
+import com.example.library.dto.request.CreateAuthorRequest;
+import com.example.library.dto.response.AuthorDTO;
 import com.example.library.entity.Author;
 
 public class AuthorMapper {
@@ -9,9 +10,9 @@ public class AuthorMapper {
         return new AuthorDTO(author.getId(), author.getName());
     }
 
-    public static Author toEntity(AuthorDTO dto) {
+    public static Author toEntity(CreateAuthorRequest request) {
         return Author.builder()
-                .name(dto.getName())
+                .name(request.name())
                 .build();
     }
 

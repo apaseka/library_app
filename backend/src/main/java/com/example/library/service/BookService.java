@@ -1,6 +1,7 @@
 package com.example.library.service;
 
-import com.example.library.dto.BookDTO;
+import com.example.library.dto.request.CreateBookRequest;
+import com.example.library.dto.response.BookDTO;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 import com.example.library.exception.ResourceNotFoundException;
@@ -43,10 +44,10 @@ public class BookService {
                 ));
     }
 
-    public BookDTO create(BookDTO dto) {
+    public BookDTO create(CreateBookRequest request) {
 
-        Author author = authorHelper.getAuthorIfExists(dto.getAuthor());
-        Book book = BookMapper.toEntity(dto, author);
+        Author author = authorHelper.getAuthorIfExists(request.author());
+        Book book = BookMapper.toEntity(request, author);
         Book savedBook = bookRepository.save(book);
         return BookMapper.toDto(savedBook);
     }

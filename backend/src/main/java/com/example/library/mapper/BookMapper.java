@@ -1,6 +1,7 @@
 package com.example.library.mapper;
 
-import com.example.library.dto.BookDTO;
+import com.example.library.dto.request.CreateBookRequest;
+import com.example.library.dto.response.BookDTO;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 
@@ -19,10 +20,10 @@ public class BookMapper {
         );
     }
 
-    public static Book toEntity(BookDTO dto, Author author) {
+    public static Book toEntity(CreateBookRequest request, Author author) {
         return Book.builder()
-                .title(dto.getTitle())
-                .year(dto.getYear())
+                .title(request.title())
+                .year(request.year())
                 .author(author)
                 .build();
     }
