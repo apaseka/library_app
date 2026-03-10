@@ -44,6 +44,7 @@ public class BookService {
                 ));
     }
 
+    @Transactional
     public BookDTO create(CreateBookRequest request) {
 
         Author author = authorHelper.getAuthorIfExists(request.author());
@@ -70,6 +71,7 @@ public class BookService {
         return BookMapper.toDto(book);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         Book book = getBookByIdOrThrow(id);
         bookRepository.delete(book);

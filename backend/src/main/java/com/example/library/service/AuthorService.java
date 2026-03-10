@@ -8,11 +8,13 @@ import com.example.library.repository.AuthorRepository;
 import com.example.library.util.AuthorHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
@@ -25,6 +27,7 @@ public class AuthorService {
                 .toList();
     }
 
+    @Transactional
     public AuthorDTO save(CreateAuthorRequest request) {
         authorHelper.ensureAuthorDoesNotExist(request.name());
         Author author = AuthorMapper.toEntity(request);
