@@ -22,6 +22,7 @@ public class Author {
     @Column(unique = true)
     private String name;
 
+    @Builder.Default
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<>();
 
