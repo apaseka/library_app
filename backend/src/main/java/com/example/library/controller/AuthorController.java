@@ -1,5 +1,6 @@
 package com.example.library.controller;
 
+import com.example.library.annotation.ApiErrorResponses;
 import com.example.library.dto.request.CreateAuthorRequest;
 import com.example.library.dto.response.AuthorDTO;
 import com.example.library.service.AuthorService;
@@ -15,10 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Authors", description = "API for working with authors")
+@ApiErrorResponses
 @RestController
 @RequestMapping("/authors")
 @RequiredArgsConstructor
-@Tag(name = "Books", description = "API for working with authors")
 public class AuthorController {
 
     private final AuthorService authorService;
@@ -26,8 +28,7 @@ public class AuthorController {
     @GetMapping
     @Operation(summary = "Extracts all authors from db")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Authors returned successfully"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Authors returned successfully")
     })
     @ApiResponse(
             responseCode = "200",
@@ -42,8 +43,7 @@ public class AuthorController {
     @PostMapping
     @Operation(summary = "Adds the author, if it is not already in the database")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Authors returned successfully"),
-            @ApiResponse(responseCode = "400", description = "Author already exists")
+            @ApiResponse(responseCode = "200", description = "Authors returned successfully")
     })
     @ApiResponse(
             responseCode = "200",

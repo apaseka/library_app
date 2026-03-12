@@ -1,5 +1,6 @@
 package com.example.library.controller;
 
+import com.example.library.annotation.ApiErrorResponses;
 import com.example.library.dto.request.CreateBookRequest;
 import com.example.library.dto.response.BookDTO;
 import com.example.library.service.BookService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "Books", description = "API for working with books")
+@ApiErrorResponses
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
@@ -32,8 +34,7 @@ public class BookController {
     @PostMapping
     @Operation(summary = "Adds book to db if author exists")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book found"),
-            @ApiResponse(responseCode = "404", description = "Author not found in db")
+            @ApiResponse(responseCode = "200", description = "Book found")
     })
     @ApiResponse(
             responseCode = "200",
@@ -47,8 +48,7 @@ public class BookController {
     @GetMapping("/{id}")
     @Operation(summary = "Get book by ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book found"),
-            @ApiResponse(responseCode = "404", description = "Book not found")
+            @ApiResponse(responseCode = "200", description = "Book found")
     })
     @ApiResponse(
             responseCode = "200",
@@ -62,8 +62,7 @@ public class BookController {
     @PutMapping("/{id}")
     @Operation(summary = "Get book by ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book found"),
-            @ApiResponse(responseCode = "404", description = "Book not found")
+            @ApiResponse(responseCode = "200", description = "Book found")
     })
     @ApiResponse(
             responseCode = "200",
@@ -77,8 +76,7 @@ public class BookController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Remove book by ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Book not found")
+            @ApiResponse(responseCode = "200", description = "Book deleted successfully")
     })
     public void delete(@PathVariable Long id) {
         bookService.deleteById(id);
