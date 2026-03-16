@@ -1,7 +1,7 @@
 package com.example.library.controller;
 
 import com.example.library.annotation.ApiErrorResponses;
-import com.example.library.dto.request.CreateBookRequest;
+import com.example.library.dto.request.CreateUpdateBookRequest;
 import com.example.library.dto.response.BookDTO;
 import com.example.library.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +41,7 @@ public class BookController {
             content = @Content(mediaType = "application/json",
                     examples = @ExampleObject(value = "{\"id\":42,\"title\":\"Pride and Prejudice\",\"year\":1813,\"author\":\"Jane Austen\"}"))
     )
-    public BookDTO create(@Valid @RequestBody CreateBookRequest request) {
+    public BookDTO create(@Valid @RequestBody CreateUpdateBookRequest request) {
         return bookService.create(request);
     }
 
@@ -60,7 +60,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Get book by ID")
+    @Operation(summary = "Change book by ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Book found")
     })
@@ -69,8 +69,8 @@ public class BookController {
             content = @Content(mediaType = "application/json",
                     examples = @ExampleObject(value = "{\"id\":42,\"title\":\"Pride and Prejudice\",\"year\":1813,\"author\":\"Jane Austen\"}"))
     )
-    public BookDTO update(@PathVariable Long id, @RequestBody BookDTO dto) {
-        return bookService.update(id, dto);
+    public BookDTO update(@PathVariable Long id, @Valid @RequestBody CreateUpdateBookRequest request) {
+        return bookService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
