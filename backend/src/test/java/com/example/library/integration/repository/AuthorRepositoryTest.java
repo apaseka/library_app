@@ -16,13 +16,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active=postgresTest")
 @Testcontainers
 class AuthorRepositoryTest {
 
     @Container
     static PostgreSQLContainer<?> postgres =
-            new PostgreSQLContainer<>("postgres:15")
+            new PostgreSQLContainer<>("postgres:18.3")
                     .withDatabaseName("library")
                     .withUsername("postgres")
                     .withPassword("postgres");
