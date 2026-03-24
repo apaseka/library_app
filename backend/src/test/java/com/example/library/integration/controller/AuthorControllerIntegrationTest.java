@@ -47,8 +47,8 @@ class AuthorControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Jane Austen - 11"))
-                .andExpect(jsonPath("$.id").isNumber());
+                .andExpect(jsonPath("$.data.name").value("Jane Austen"))
+                .andExpect(jsonPath("$.data.id").isNumber());
     }
 
     @Test
@@ -74,9 +74,9 @@ class AuthorControllerIntegrationTest {
         ResultActions perform = mockMvc.perform(get("/authors"));
         perform
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[?(@.name=='Author 1 - 8')]").exists())
-                .andExpect(jsonPath("$[?(@.name=='Author 2 - 8')]").exists());
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data.[?(@.name=='Author 1')]").exists())
+                .andExpect(jsonPath("$.data.[?(@.name=='Author 2')]").exists());
     }
 
     @Test

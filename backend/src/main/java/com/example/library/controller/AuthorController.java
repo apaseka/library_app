@@ -3,6 +3,7 @@ package com.example.library.controller;
 import com.example.library.annotation.ApiErrorResponses;
 import com.example.library.dto.request.CreateAuthorRequest;
 import com.example.library.dto.response.AuthorDTO;
+import com.example.library.dto.response.LibraryResponse;
 import com.example.library.service.AuthorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,10 +34,9 @@ public class AuthorController {
     @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json",
-                    examples = @ExampleObject(value = "[{\"id\":42,\"name\":\"Jane Austen\"}," +
-                            "{\"id\":64,\"name\":\"James Joyce\"}]"))
-    )
-    public List<AuthorDTO> getAll() {
+                    examples = @ExampleObject(value = "{\"data\":[{\"id\":42,\"name\":\"Jane Austen\"}," +
+                            "{\"id\":64,\"name\":\"James Joyce\"}]}")))
+    public LibraryResponse<List<AuthorDTO>> getAll() {
         return authorService.getAll();
     }
 
@@ -48,9 +48,9 @@ public class AuthorController {
     @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json",
-                    examples = @ExampleObject(value = "{\"id\":42,\"name\":\"Jane Austen\"}"))
+                    examples = @ExampleObject(value = "{\"data\":{\"id\":42,\"name\":\"Jane Austen\"}}"))
     )
-    public AuthorDTO create(@Valid @RequestBody CreateAuthorRequest request) {
+    public LibraryResponse<AuthorDTO> create(@Valid @RequestBody CreateAuthorRequest request) {
         return authorService.save(request);
     }
 
