@@ -62,7 +62,7 @@ class BookControllerIntegrationTest {
         mockMvc.perform(post("/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.title").value("Clean Code"))
                 .andExpect(jsonPath("$.data.author").value("Robert Martin"))
                 .andExpect(jsonPath("$.data.id").isNumber());
@@ -133,7 +133,7 @@ class BookControllerIntegrationTest {
         Book book = bookRepository.save(new Book(null, "To Delete", author1, 2010));
 
         mockMvc.perform(delete("/books/{id}", book.getId()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/books/{id}", book.getId()))
                 .andExpect(status().isNotFound());

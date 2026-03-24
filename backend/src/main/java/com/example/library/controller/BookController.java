@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,12 +34,13 @@ public class BookController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Adds book to db if author exists")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book found")
+            @ApiResponse(responseCode = "201", description = "Book found")
     })
     @ApiResponse(
-            responseCode = "200",
+            responseCode = "201",
             content = @Content(mediaType = "application/json",
                     examples = @ExampleObject(value = "{\"data\":{\"id\":42,\"title\":\"Pride and Prejudice\",\"year\":1813,\"author\":\"Jane Austen\"}}"))
     )
@@ -75,9 +77,10 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Remove book by ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Book deleted successfully")
+            @ApiResponse(responseCode = "204", description = "Book deleted successfully")
     })
     public void delete(@PathVariable Long id) {
         bookService.deleteById(id);

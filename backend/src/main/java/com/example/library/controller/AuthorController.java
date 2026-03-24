@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,12 +42,13 @@ public class AuthorController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Adds the author, if it is not already in the database")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Authors returned successfully")
+            @ApiResponse(responseCode = "201", description = "Authors returned successfully")
     })
     @ApiResponse(
-            responseCode = "200",
+            responseCode = "201",
             content = @Content(mediaType = "application/json",
                     examples = @ExampleObject(value = "{\"data\":{\"id\":42,\"name\":\"Jane Austen\"}}"))
     )
