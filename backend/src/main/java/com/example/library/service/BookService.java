@@ -13,6 +13,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +43,8 @@ public class BookService {
         return new LibraryResponse<>(dto);
     }
 
-    @CacheEvict(value = "books", key = "#result.data.id")
     @Transactional
+    @CacheEvict(value = "books", key = "'all'")
     public LibraryResponse<BookDTO> create(CreateUpdateBookRequest request) {
 
         Author author = authorHelper.getAuthorIfExists(request.author());
@@ -53,8 +54,11 @@ public class BookService {
         return new LibraryResponse<>(dto);
     }
 
-    @CacheEvict(value = "books", key = "#id")
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "books", key = "'all'"),
+            @CacheEvict(value = "books", key = "#result.data.id", condition = "#result != null")
+    })
     public LibraryResponse<BookDTO> update(Long id, CreateUpdateBookRequest request) {
         Book book = getBookByIdOrThrow(id);
         Author author = authorHelper.getAuthorIfExists(request.author());
@@ -68,8 +72,11 @@ public class BookService {
         return new LibraryResponse<>(dto);
     }
 
-    @CacheEvict(value = "books", key = "#id")
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "books", key = "'all'"),
+            @CacheEvict(value = "books", key = "#result.data.id", condition = "#result != null")
+    })
     public void deleteById(Long id) {
         Book book = getBookByIdOrThrow(id);
         bookRepository.delete(book);
