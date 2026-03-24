@@ -2,6 +2,7 @@ package com.example.library.unit.service;
 
 import com.example.library.dto.request.CreateAuthorRequest;
 import com.example.library.dto.response.AuthorDTO;
+import com.example.library.dto.response.LibraryResponse;
 import com.example.library.entity.Author;
 import com.example.library.service.AuthorService;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.*;
 class AuthorServiceTest extends ServiceTest {
 
     @InjectMocks
-    AuthorService authorService;
+    private AuthorService authorService;
 
     @Test
     void shouldReturnAllAuthors() {
@@ -28,13 +29,14 @@ class AuthorServiceTest extends ServiceTest {
 
         when(authorRepository.findAll()).thenReturn(authors);
 
-        List<AuthorDTO> result = authorService.getAll();
+        LibraryResponse<List<AuthorDTO>> response = authorService.getAll();
+        List<AuthorDTO> result = response.getData();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(2, result.size());
-        assertEquals("First - 5", result.getFirst().getName());
-        assertTrue(result.stream().anyMatch(a -> a.getName().equals("Second - 6")));
+        assertEquals("First", result.getFirst().getName());
+        assertTrue(result.stream().anyMatch(a -> a.getName().equals("Second")));
         verify(authorRepository).findAll();
     }
 
@@ -46,10 +48,11 @@ class AuthorServiceTest extends ServiceTest {
         doNothing().when(authorHelper).ensureAuthorDoesNotExist(author.getName());
         when(authorRepository.save(any(Author.class))).thenReturn(author);
 
-        AuthorDTO result = authorService.save(request);
+        LibraryResponse<AuthorDTO> response = authorService.save(request);
+        AuthorDTO result = response.getData();
 
         assertEquals(1L, result.getId());
-        assertEquals("Jane Austen - 11", result.getName());
+        assertEquals("Jane Austen", result.getName());
 
         verify(authorRepository).save(any(Author.class));
     }

@@ -63,9 +63,9 @@ class BookControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Clean Code"))
-                .andExpect(jsonPath("$.author").value("Robert Martin - 13"))
-                .andExpect(jsonPath("$.id").isNumber());
+                .andExpect(jsonPath("$.data.title").value("Clean Code"))
+                .andExpect(jsonPath("$.data.author").value("Robert Martin"))
+                .andExpect(jsonPath("$.data.id").isNumber());
     }
 
     @Test
@@ -89,11 +89,11 @@ class BookControllerIntegrationTest {
         mockMvc.perform(get("/books"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].title").value("Clean Code"))
-                .andExpect(jsonPath("$[0].author").value("Robert Martin - 13"))
-                .andExpect(jsonPath("$[1].title").value("Ulysses"))
-                .andExpect(jsonPath("$[1].author").value("James Joyce - 11"));
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data.[0].title").value("Clean Code"))
+                .andExpect(jsonPath("$.data.[0].author").value("Robert Martin"))
+                .andExpect(jsonPath("$.data.[1].title").value("Ulysses"))
+                .andExpect(jsonPath("$.data.[1].author").value("James Joyce"));
     }
 
     @Test
@@ -102,8 +102,8 @@ class BookControllerIntegrationTest {
 
         mockMvc.perform(get("/books/{id}", book.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Clean Code"))
-                .andExpect(jsonPath("$.author").value("Robert Martin - 13"));
+                .andExpect(jsonPath("$.data.title").value("Clean Code"))
+                .andExpect(jsonPath("$.data.author").value("Robert Martin"));
     }
 
     @Test
@@ -117,16 +117,15 @@ class BookControllerIntegrationTest {
     void shouldUpdateBookAndChangeAuthor() throws Exception {
         Book book = bookRepository.save(new Book(null, "Old Title", author1, 2000));
 
-//        BookDTO dto = new BookDTO(book.getId(), "Clean Architecture", 2017, author2.getName());
         CreateUpdateBookRequest request = new CreateUpdateBookRequest("Clean Architecture", 2017, author2.getName());
 
         mockMvc.perform(put("/books/{id}", book.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Clean Architecture"))
-                .andExpect(jsonPath("$.year").value(2017))
-                .andExpect(jsonPath("$.author").value("James Joyce - 11"));
+                .andExpect(jsonPath("$.data.title").value("Clean Architecture"))
+                .andExpect(jsonPath("$.data.year").value(2017))
+                .andExpect(jsonPath("$.data.author").value("James Joyce"));
     }
 
     @Test

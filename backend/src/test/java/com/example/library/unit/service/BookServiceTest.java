@@ -1,7 +1,9 @@
 package com.example.library.unit.service;
 
 import com.example.library.dto.request.CreateUpdateBookRequest;
+import com.example.library.dto.response.AuthorDTO;
 import com.example.library.dto.response.BookDTO;
+import com.example.library.dto.response.LibraryResponse;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 import com.example.library.repository.BookRepository;
@@ -43,13 +45,14 @@ class BookServiceTest extends ServiceTest {
 
         when(bookRepository.findAll()).thenReturn(bookEntities);
 
-        List<BookDTO> books = bookService.getAll();
+        LibraryResponse<List<BookDTO>> response = bookService.getAll();
+        List<BookDTO> books = response.getData();
 
         assertNotNull(books);
         assertFalse(books.isEmpty());
         assertEquals(2, books.size());
         assertEquals("Pride and Prejudice", books.getFirst().getTitle());
-        assertTrue(books.stream().anyMatch(b -> b.getAuthor().equals("Jane Austen - 11")));
+        assertTrue(books.stream().anyMatch(b -> b.getAuthor().equals("Jane Austen")));
         verify(bookRepository).findAll();
     }
 
@@ -58,11 +61,12 @@ class BookServiceTest extends ServiceTest {
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        BookDTO result = bookService.getById(1L);
+        LibraryResponse<BookDTO> response = bookService.getById(1L);
+        BookDTO result = response.getData();
 
         assertEquals(1L, result.getId());
         assertEquals("Pride and Prejudice", result.getTitle());
-        assertEquals("Jane Austen - 11", result.getAuthor());
+        assertEquals("Jane Austen", result.getAuthor());
         verify(bookRepository).findById(1L);
     }
 
@@ -73,11 +77,12 @@ class BookServiceTest extends ServiceTest {
         when(authorHelper.getAuthorIfExists(request.author())).thenReturn(book.getAuthor());
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-        BookDTO result = bookService.create(request);
+        LibraryResponse<BookDTO> response = bookService.create(request);
+        BookDTO result = response.getData();
 
         assertEquals(1L, result.getId());
         assertEquals("Pride and Prejudice", result.getTitle());
-        assertEquals("Jane Austen - 11", result.getAuthor());
+        assertEquals("Jane Austen", result.getAuthor());
         verify(bookRepository).save(any(Book.class));
         verify(authorHelper).getAuthorIfExists(any());
     }
@@ -90,11 +95,12 @@ class BookServiceTest extends ServiceTest {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(bookRepository.save(book)).thenReturn(book);
 
-        BookDTO result = bookService.update(1L, request);
+        LibraryResponse<BookDTO> response = bookService.update(1L, request);
+        BookDTO result = response.getData();
 
         assertEquals(1L, result.getId());
         assertEquals("Pride and Prejudice new edition", result.getTitle());
-        assertEquals("Jane Austen - 11", result.getAuthor());
+        assertEquals("Jane Austen", result.getAuthor());
         verify(bookRepository).findById(1L);
         verify(authorHelper).getAuthorIfExists(any());
     }

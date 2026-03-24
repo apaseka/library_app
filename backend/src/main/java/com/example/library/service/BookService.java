@@ -2,6 +2,7 @@ package com.example.library.service;
 
 import com.example.library.dto.request.CreateUpdateBookRequest;
 import com.example.library.dto.response.BookDTO;
+import com.example.library.dto.response.LibraryResponse;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 import com.example.library.exception.ResourceNotFoundException;
@@ -10,6 +11,8 @@ import com.example.library.repository.BookRepository;
 import com.example.library.util.AuthorHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,29 +26,36 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorHelper authorHelper;
 
-    public List<BookDTO> getAll() {
-        return bookRepository.findAll()
+    @Cacheable(value = "books",key = "'all'")
+    public LibraryResponse<List<BookDTO>> getAll() {
+        List<BookDTO> books = bookRepository.findAll()
                 .stream()
                 .map(BookMapper::toDto)
                 .toList();
+        return new LibraryResponse<>(books);
     }
 
-    public BookDTO getById(Long id) {
+    @Cacheable(value = "books", key = "#id")
+    public LibraryResponse<BookDTO> getById(Long id) {
         Book book = getBookByIdOrThrow(id);
-        return BookMapper.toDto(book);
+        BookDTO dto = BookMapper.toDto(book);
+        return new LibraryResponse<>(dto);
     }
 
+    @CacheEvict(value = "books", key = "#result.data.id")
     @Transactional
-    public BookDTO create(CreateUpdateBookRequest request) {
+    public LibraryResponse<BookDTO> create(CreateUpdateBookRequest request) {
 
         Author author = authorHelper.getAuthorIfExists(request.author());
         Book book = BookMapper.toEntity(request, author);
         Book savedBook = bookRepository.save(book);
-        return BookMapper.toDto(savedBook);
+        BookDTO dto = BookMapper.toDto(savedBook);
+        return new LibraryResponse<>(dto);
     }
 
+    @CacheEvict(value = "books", key = "#id")
     @Transactional
-    public BookDTO update(Long id, CreateUpdateBookRequest request) {
+    public LibraryResponse<BookDTO> update(Long id, CreateUpdateBookRequest request) {
         Book book = getBookByIdOrThrow(id);
         Author author = authorHelper.getAuthorIfExists(request.author());
 
@@ -54,9 +64,11 @@ public class BookService {
         book.setAuthor(author);
 
         Book savedBook = bookRepository.save(book);
-        return BookMapper.toDto(savedBook);
+        BookDTO dto = BookMapper.toDto(savedBook);
+        return new LibraryResponse<>(dto);
     }
 
+    @CacheEvict(value = "books", key = "#id")
     @Transactional
     public void deleteById(Long id) {
         Book book = getBookByIdOrThrow(id);

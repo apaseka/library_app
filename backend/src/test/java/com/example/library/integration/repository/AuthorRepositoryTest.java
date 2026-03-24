@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 class AuthorRepositoryTest {
 
+    @Autowired
+    private AuthorRepository authorRepository;
+
     @Container
     static PostgreSQLContainer<?> postgres =
             new PostgreSQLContainer<>("postgres:18.3")
@@ -34,9 +37,6 @@ class AuthorRepositoryTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
     }
-
-    @Autowired
-    AuthorRepository authorRepository;
 
     @BeforeEach
     void setup() {
