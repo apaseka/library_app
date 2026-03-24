@@ -46,7 +46,7 @@ class AuthorControllerIntegrationTest {
         mockMvc.perform(post("/authors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.name").value("Jane Austen"))
                 .andExpect(jsonPath("$.data.id").isNumber());
     }
