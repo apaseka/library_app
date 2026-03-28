@@ -3,20 +3,15 @@ package com.example.library.mapper;
 import com.example.library.dto.request.CreateAuthorRequest;
 import com.example.library.dto.response.AuthorDTO;
 import com.example.library.entity.Author;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-public final class AuthorMapper {
+@Mapper(componentModel = "spring")
+public interface AuthorMapper {
 
-    private AuthorMapper() {
-    }
+    AuthorDTO toDto(Author author);
 
-    public static AuthorDTO toDto(Author author) {
-        return new AuthorDTO(author.getId(), author.getName());
-    }
-
-    public static Author toEntity(CreateAuthorRequest request) {
-        return Author.builder()
-                .name(request.name())
-                .build();
-    }
-
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "books", ignore = true)
+    Author toEntity(CreateAuthorRequest request);
 }

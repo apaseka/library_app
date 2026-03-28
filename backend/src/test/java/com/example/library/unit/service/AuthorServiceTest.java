@@ -4,9 +4,11 @@ import com.example.library.dto.request.CreateAuthorRequest;
 import com.example.library.dto.response.AuthorDTO;
 import com.example.library.dto.response.LibraryResponse;
 import com.example.library.entity.Author;
+import com.example.library.mapper.AuthorMapper;
 import com.example.library.service.AuthorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ class AuthorServiceTest extends ServiceTest {
 
     @InjectMocks
     private AuthorService authorService;
+    @Mock
+    private AuthorMapper authorMapper;
 
     @Test
     void shouldReturnAllAuthors() {
@@ -28,6 +32,11 @@ class AuthorServiceTest extends ServiceTest {
         );
 
         when(authorRepository.findAll()).thenReturn(authors);
+        when(authorMapper.toDto(any(Author.class)))
+                .thenAnswer(inv -> {
+                    Author a = inv.getArgument(0);
+                    return new AuthorDTO(a.getId(), a.getName());
+                });
 
         LibraryResponse<List<AuthorDTO>> response = authorService.getAll();
         List<AuthorDTO> result = response.getData();
@@ -47,6 +56,16 @@ class AuthorServiceTest extends ServiceTest {
 
         doNothing().when(authorHelper).ensureAuthorDoesNotExist(author.getName());
         when(authorRepository.save(any(Author.class))).thenReturn(author);
+        when(authorMapper.toDto(any(Author.class)))
+                .thenAnswer(inv -> {
+                    Author a = inv.getArgument(0);
+                    return new AuthorDTO(a.getId(), a.getName());
+                });
+        when(authorMapper.toEntity(any(CreateAuthorRequest.class)))
+                .thenAnswer(inv -> {
+                    CreateAuthorRequest r = inv.getArgument(0);
+                    return Author.builder().name(r.name()).build();
+                });
 
         LibraryResponse<AuthorDTO> response = authorService.save(request);
         AuthorDTO result = response.getData();

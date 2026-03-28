@@ -24,13 +24,14 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorHelper authorHelper;
+    private final AuthorMapper authorMapper;
 
     @Cacheable(value = "authors", key = "'all'")
     public LibraryResponse<List<AuthorDTO>> getAll() {
         log.debug("Cache miss for authors::all, loading authors from database");
         List<AuthorDTO> authors = authorRepository.findAll()
                 .stream()
-                .map(AuthorMapper::toDto)
+                .map(authorMapper::toDto)
                 .toList();
         log.debug("Loaded {} authors from database", authors.size());
         return new LibraryResponse<>(authors);
@@ -42,9 +43,9 @@ public class AuthorService {
         log.info("Creating author with name='{}' and evicting cache authors::all", request.name());
 
         authorHelper.ensureAuthorDoesNotExist(request.name());
-        Author author = AuthorMapper.toEntity(request);
+        Author author = authorMapper.toEntity(request);
         Author saved = authorRepository.save(author);
-        AuthorDTO dto = AuthorMapper.toDto(saved);
+        AuthorDTO dto = authorMapper.toDto(saved);
 
         log.info("Author created id={}, name='{}'", saved.getId(), saved.getName());
         return new LibraryResponse<>(dto);

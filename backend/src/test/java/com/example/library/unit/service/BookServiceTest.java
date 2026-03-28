@@ -1,11 +1,11 @@
 package com.example.library.unit.service;
 
 import com.example.library.dto.request.CreateUpdateBookRequest;
-import com.example.library.dto.response.AuthorDTO;
 import com.example.library.dto.response.BookDTO;
 import com.example.library.dto.response.LibraryResponse;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
+import com.example.library.mapper.BookMapper;
 import com.example.library.repository.BookRepository;
 import com.example.library.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +27,9 @@ class BookServiceTest extends ServiceTest {
     private BookService bookService;
     @Mock
     private BookRepository bookRepository;
+    @Mock
+    private BookMapper bookMapper;
+
     private Book book;
 
     @BeforeEach
@@ -44,6 +47,11 @@ class BookServiceTest extends ServiceTest {
         List<Book> bookEntities = List.of(firstBook, secondBook);
 
         when(bookRepository.findAll()).thenReturn(bookEntities);
+        when(bookMapper.toDto(any(Book.class)))
+                .thenAnswer(inv -> {
+                    Book b = inv.getArgument(0);
+                    return new BookDTO(b.getId(), b.getTitle(), b.getYear(), b.getAuthor().getName());
+                });
 
         LibraryResponse<List<BookDTO>> response = bookService.getAll();
         List<BookDTO> books = response.getData();
@@ -60,6 +68,11 @@ class BookServiceTest extends ServiceTest {
     void shouldReturnBookById() {
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(bookMapper.toDto(any(Book.class)))
+                .thenAnswer(inv -> {
+                    Book b = inv.getArgument(0);
+                    return new BookDTO(b.getId(), b.getTitle(), b.getYear(), b.getAuthor().getName());
+                });
 
         LibraryResponse<BookDTO> response = bookService.getById(1L);
         BookDTO result = response.getData();
@@ -76,6 +89,21 @@ class BookServiceTest extends ServiceTest {
 
         when(authorHelper.getAuthorIfExists(request.author())).thenReturn(book.getAuthor());
         when(bookRepository.save(any(Book.class))).thenReturn(book);
+        when(bookMapper.toEntity(any(CreateUpdateBookRequest.class), any(Author.class)))
+                .thenAnswer(inv -> {
+                    CreateUpdateBookRequest r = inv.getArgument(0);
+                    Author a = inv.getArgument(1);
+                    return Book.builder()
+                            .title(r.title())
+                            .year(r.year())
+                            .author(a)
+                            .build();
+                });
+        when(bookMapper.toDto(any(Book.class)))
+                .thenAnswer(inv -> {
+                    Book b = inv.getArgument(0);
+                    return new BookDTO(b.getId(), b.getTitle(), b.getYear(), b.getAuthor().getName());
+                });
 
         LibraryResponse<BookDTO> response = bookService.create(request);
         BookDTO result = response.getData();
@@ -94,6 +122,11 @@ class BookServiceTest extends ServiceTest {
         when(authorHelper.getAuthorIfExists(request.author())).thenReturn(book.getAuthor());
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(bookRepository.save(book)).thenReturn(book);
+        when(bookMapper.toDto(any(Book.class)))
+                .thenAnswer(inv -> {
+                    Book b = inv.getArgument(0);
+                    return new BookDTO(b.getId(), b.getTitle(), b.getYear(), b.getAuthor().getName());
+                });
 
         LibraryResponse<BookDTO> response = bookService.update(1L, request);
         BookDTO result = response.getData();
