@@ -4,28 +4,16 @@ import com.example.library.dto.request.CreateUpdateBookRequest;
 import com.example.library.dto.response.BookDTO;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-public final class BookMapper {
+@Mapper(componentModel = "spring")
+public interface BookMapper {
 
-    private BookMapper() {
-    }
+    @Mapping(source = "author.name", target = "author")
+    BookDTO toDto(Book book);
 
-    public static BookDTO toDto(Book book) {
-        return new BookDTO(
-                book.getId(),
-                book.getTitle(),
-                book.getYear(),
-                book.getAuthor().getName());
-        // TODO: Accessing book.getAuthor().getName() outside an active transaction
-        // may cause LazyInitializationException due to lazy loading.
-        // Solution: either keep the transaction open or use fetch join / DTO projection.
-    }
-
-    public static Book toEntity(CreateUpdateBookRequest request, Author author) {
-        return Book.builder()
-                .title(request.title())
-                .year(request.year())
-                .author(author)
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "author", source = "author")
+    Book toEntity(CreateUpdateBookRequest request, Author author);
 }

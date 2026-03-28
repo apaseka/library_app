@@ -28,13 +28,14 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final AuthorHelper authorHelper;
+    private final BookMapper bookMapper;
 
     @Cacheable(value = "books", key = "'all'")
     public LibraryResponse<List<BookDTO>> getAll() {
         log.debug("Fetching all books");
         List<BookDTO> books = bookRepository.findAll()
                 .stream()
-                .map(BookMapper::toDto)
+                .map(bookMapper::toDto)
                 .toList();
         log.debug("Fetched {} books", books.size());
         return new LibraryResponse<>(books);
@@ -47,7 +48,7 @@ public class BookService {
 
         try {
             Book book = getBookByIdOrThrow(id);
-            return new LibraryResponse<>(BookMapper.toDto(book));
+            return new LibraryResponse<>(bookMapper.toDto(book));
         } catch (Exception ex) {
             log.error("Failed to get book id={}", id, ex);
             throw ex;
@@ -61,12 +62,13 @@ public class BookService {
 
         Author author = authorHelper.getAuthorIfExists(request.author());
 
-        Book book = BookMapper.toEntity(request, author);
+        Book book = bookMapper.toEntity(request, author);
+        log.info("Before save: id={}, title={}", book.getId(), book.getTitle());
         Book savedBook = bookRepository.save(book);
 
         log.info("Book created with id={}, title={}", savedBook.getId(), savedBook.getTitle());
 
-        return new LibraryResponse<>(BookMapper.toDto(savedBook));
+        return new LibraryResponse<>(bookMapper.toDto(savedBook));
     }
 
     @Transactional
@@ -85,7 +87,7 @@ public class BookService {
 
         Book savedBook = bookRepository.save(book);
         log.info("Book updated with id={}", savedBook.getId());
-        BookDTO dto = BookMapper.toDto(savedBook);
+        BookDTO dto = bookMapper.toDto(savedBook);
         return new LibraryResponse<>(dto);
     }
 
