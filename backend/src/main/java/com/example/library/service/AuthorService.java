@@ -8,6 +8,7 @@ import com.example.library.mapper.AuthorMapper;
 import com.example.library.repository.AuthorRepository;
 import com.example.library.util.AuthorHelper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
@@ -25,20 +27,26 @@ public class AuthorService {
 
     @Cacheable(value = "authors", key = "'all'")
     public LibraryResponse<List<AuthorDTO>> getAll() {
+        log.debug("Cache miss for authors::all, loading authors from database");
         List<AuthorDTO> authors = authorRepository.findAll()
                 .stream()
                 .map(AuthorMapper::toDto)
                 .toList();
+        log.debug("Loaded {} authors from database", authors.size());
         return new LibraryResponse<>(authors);
     }
 
     @CacheEvict(value = "authors", key = "'all'")
     @Transactional
     public LibraryResponse<AuthorDTO> save(CreateAuthorRequest request) {
+        log.info("Creating author with name='{}' and evicting cache authors::all", request.name());
+
         authorHelper.ensureAuthorDoesNotExist(request.name());
         Author author = AuthorMapper.toEntity(request);
         Author saved = authorRepository.save(author);
         AuthorDTO dto = AuthorMapper.toDto(saved);
+
+        log.info("Author created id={}, name='{}'", saved.getId(), saved.getName());
         return new LibraryResponse<>(dto);
     }
 
