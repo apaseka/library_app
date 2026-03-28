@@ -92,7 +92,7 @@ public class BookService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "books", key = "'all'"),
-            @CacheEvict(value = "books", key = "#result.data.id", condition = "#result != null")
+            @CacheEvict(value = "books", key = "#id")
     })
     public void deleteById(Long id) {
         log.info("Deleting book id={}", id);
